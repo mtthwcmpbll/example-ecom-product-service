@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.12.RELEASE</version>
+    <version>4.0.0</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
@@ -14,8 +14,8 @@
   <version>1.1.0-SNAPSHOT</version>
 
   <properties>
-    <java.version>1.8</java.version>
-    <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
+    <java.version>21</java.version>
+    <spring-cloud.version>2024.0.1</spring-cloud.version>
   </properties>
 
   <distributionManagement>
@@ -62,34 +62,49 @@
       <version>1.0.0</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-sleuth</artifactId>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-tracing-bridge-brave</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-zipkin</artifactId>
+      <groupId>io.zipkin.reporter2</groupId>
+      <artifactId>zipkin-reporter-brave</artifactId>
     </dependency>
+    <!-- TODO: ecom-security 1.0.0 uses WebSecurityConfigurerAdapter which was removed in Spring Security 6+.
+         Needs to be upgraded to Spring Boot 4 compatible version. Excluded for now. -->
+    <!--
     <dependency>
       <groupId>com.example.ecom</groupId>
       <artifactId>ecom-security</artifactId>
       <version>1.0.0</version>
     </dependency>
+    -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
-
     </dependency>
-    <!-- Legacy QueryDSL 3.2.3 -->
     <dependency>
-        <groupId>com.mysema.querydsl</groupId>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-data-jpa-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- QueryDSL 5.x with Jakarta -->
+    <dependency>
+        <groupId>com.querydsl</groupId>
         <artifactId>querydsl-jpa</artifactId>
-        <version>3.2.3</version>
+        <version>5.1.0</version>
+        <classifier>jakarta</classifier>
     </dependency>
     <dependency>
-        <groupId>com.mysema.querydsl</groupId>
+        <groupId>com.querydsl</groupId>
         <artifactId>querydsl-apt</artifactId>
-        <version>3.2.3</version>
+        <version>5.1.0</version>
+        <classifier>jakarta</classifier>
         <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -111,9 +126,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>3.14.0</version>
         <configuration>
           <proc>none</proc>  <!-- Let apt-maven-plugin handle it -->
+          <parameters>true</parameters>
+          <release>21</release>
         </configuration>
       </plugin>
       <plugin>
@@ -141,7 +158,7 @@
             </goals>
             <configuration>
               <outputDirectory>target/generated-sources/java</outputDirectory>
-              <processor>com.mysema.query.apt.jpa.JPAAnnotationProcessor</processor>
+              <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
             </configuration>
           </execution>
         </executions>
